@@ -1,4 +1,4 @@
-class MyProcessor extends AudioWorkletProcessor {
+class LoopPlayerProcessor extends AudioWorkletProcessor {
     static get parameterDescriptors() {
 	return []
     }
@@ -6,7 +6,11 @@ class MyProcessor extends AudioWorkletProcessor {
     constructor() {
 	super()
 	this.port.onmessage = e => {
-	    if (e.data.type === 'loadWasm') {		
+	    // unfortunately, this seems to be the only way to load
+	    // the wasm module in the worklet.
+	    // we have to fetch it here because the worklet scope doesn't expose
+	    // 'fetch()'
+	    if (e.data.type === 'loadWasm') {
 		WebAssembly.instantiate(e.data.data).then(w => {		    
 		    this._wasm = w.instance
 		    // grow memory to accomodate full sample ... 
@@ -33,8 +37,9 @@ class MyProcessor extends AudioWorkletProcessor {
 			this._outPtr,
 			this._size
 		    )
-		})
+		})		
 	    } else if (e.data.type === 'loadSample') {
+		// same with the sample ... 
 		this._sample_size = e.data.length
 		this._sample_data = e.data.samples
 		console.log("sample size:");
@@ -45,17 +50,16 @@ class MyProcessor extends AudioWorkletProcessor {
 			this._wasm.exports.memory.buffer,
 			this._samplePtr,
 			this._sample_size
-		    )
-		
-		    // copy to wasm buffer
+		    )		
+		    // copy to wasm buffer 
 		    this._sampleBuf.set(this._sample_data);
+		    // load to loop player
 		    this._wasm.exports.set_sample_data_raw(this._samplePtr, this._sample_size)
 		    this._sample_set = true;
 		}
 	    }
 	}
     }
-    	    
     
     process(inputs, outputs, parameters) {
 	if (!this._wasm || !this._sample_set) {
@@ -72,4 +76,4 @@ class MyProcessor extends AudioWorkletProcessor {
     }
 }
 
-registerProcessor('my-processor', MyProcessor)
+registerProcessor('loop-player-processor', LoopPlayerProcessor)

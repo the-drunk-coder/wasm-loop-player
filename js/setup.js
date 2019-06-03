@@ -4,7 +4,7 @@ if (ctx.audioWorklet === undefined) {
 } else {    
     ctx.audioWorklet.addModule('js/worklet.js?t=' + new Date().getTime())
 	.then(() => {
-	    const n = new AudioWorkletNode(ctx, 'my-processor')
+	    const n = new AudioWorkletNode(ctx, 'loop-player-processor')
 	    n.connect(ctx.destination)
 	    
 	    fetch('wasm/wasm_loop_player.wasm?t=' + new Date().getTime())
