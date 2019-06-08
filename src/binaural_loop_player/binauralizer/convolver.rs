@@ -69,3 +69,79 @@ impl BlockConvolver {
     }
 }
 
+pub struct TimeDomainConvolver {
+    ir: [f32; 128],
+    delay: [f32; 256],
+    delay_idx: usize,
+}
+
+impl std::clone::Clone for TimeDomainConvolver {
+    
+    fn clone(&self) -> Self {        
+        let mut ir = [0.0; 128];
+        let mut delay = [0.0; 256];
+
+        for i in 0..128 {
+            ir[i] = self.ir[i];
+            delay[i] = self.delay[i];
+        }
+        for i in 128..256 {
+            delay[i] = self.delay[i];
+        }
+        
+        TimeDomainConvolver {
+            ir,
+            delay,
+            delay_idx: self.delay_idx            
+        }
+    }
+}
+
+impl TimeDomainConvolver {
+    pub fn from_ir(ir: &[f32; 128]) -> TimeDomainConvolver {
+        let mut n_ir = [0.0; 128];
+        for i in 0..128 {
+            n_ir[i] = ir[i];
+        }
+        
+        TimeDomainConvolver {
+            ir: n_ir,
+            delay: [0.0; 256],
+            delay_idx: 128,
+        }
+    }
+    
+    pub fn convolve(&mut self, input: &[f32; 128]) -> [f32; 128] {
+        let mut out = [0.0; 128];
+
+        for k in 0..128 {
+            self.delay[self.delay_idx + k] = input[k];
+        }
+
+        if self.delay_idx == 0 {
+            for k in 0..128 {
+                for i in 0..128 {
+                    let mut idx = 0;
+                    if(i > k) {
+                        idx = 256 - (i - k);
+                    } else {
+                        idx = k - i;
+                    }                                                            
+                    out[k] += self.ir[i] * self.delay[idx];
+                }
+            }
+            self.delay_idx = 128;
+        } else if self.delay_idx == 128 {
+            for k in 0..128 {
+                for i in 0..128 {
+                    out[k] += self.ir[i] * self.delay[(self.delay_idx + k) - i];
+                }
+            }
+            self.delay_idx = 0;
+        }
+        
+        out 
+    }
+}
+
+
