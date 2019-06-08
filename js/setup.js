@@ -1,5 +1,4 @@
 const ctx = new AudioContext({
-  latencyHint: 'interactive',
   sampleRate: 44100,
 })
 
@@ -12,6 +11,25 @@ if (ctx.audioWorklet === undefined) {
 									   numberOfOutputs: 1,
 									   outputChannelCount: [2], } );
 	    n.connect(ctx.destination)
+
+	    const autoPlay = document.getElementById('auto-play')
+	    autoPlay.addEventListener('change', e => {
+		if (e.target.value === 1) {
+		    ctx.resume()
+		} else {
+		    ctx.suspend()
+		}
+	    })
+	    
+	    const azi = document.getElementById('azimuth-slider')
+	    azi.addEventListener('input', e => {
+		n.parameters.get('azimuth').value = e.target.value
+	    })
+	    
+	    const ele = document.getElementById('elevation-slider')
+	    ele.addEventListener('input', e => {
+		n.parameters.get('elevation').value = e.target.value
+	    })
 	    
 	    fetch('wasm/wasm_loop_player.wasm?t=' + new Date().getTime())
 		.then(r => r.arrayBuffer())
@@ -20,17 +38,16 @@ if (ctx.audioWorklet === undefined) {
 	    fetch('audio/amen.wav?t=' + new Date().getTime())
 		.then(r => r.arrayBuffer())
 		.then(r => ctx.decodeAudioData(r)
-		      .then(r => n.port.postMessage({ type: 'loadSample', samples: r.getChannelData(0), length: r.length })))})
+		      .then(r => n.port.postMessage({ type: 'loadSample', samples: r.getChannelData(0), length: r.length })))
 
-    console.log("sr: ");
-    console.log(ctx.sampleRate);
+	    fetch('audio/ir.wav?t=' + new Date().getTime())
+		.then(r => r.arrayBuffer())
+		.then(r => ctx.decodeAudioData(r)
+		      .then(r => n.port.postMessage({ type: 'loadIr', samples: r.getChannelData(0), length: r.length })))
 
-    const autoPlay = document.getElementById('auto-play')
-    autoPlay.addEventListener('change', e => {
-	if (e.target.value === 1) {
-            ctx.resume()
-	} else {
-            ctx.suspend()
-	}
-    })
+	})
+   
+    console.log("sr: " + ctx.sampleRate);
+
+    
 }

@@ -5,15 +5,25 @@
     <script src="https://g200kg.github.io/webaudio-controls/webaudio-controls.js" ></script>
   </head>
   <body>
-    <div class="parts">
-      Play the Amen Break! <webaudio-switch id="auto-play" value="0">On/Off</webaudio-switch>
-    </div>
+    <h1>Play the Amen Break !!!11</h1>
+    <div>
+      <p><webaudio-switch id="auto-play" value="0">On/Off</webaudio-switch></p>
+      <p><webaudio-slider id="azimuth-slider" value="0" min="-1.57" max="1.57" step="0.01" direction="horz"> Vertical Pan</webaudio-slider></p>
+      <p><webaudio-slider id="elevation-slider" value="-1.57" min="-3.14" max="0.0" step="0.01" direction="horz">Horizontal Pan</webaudio-slider></p>
+    </div>    
+    <br/>
     <div>
     Inspired by <a href ="https://github.com/reprimande/wasm-audioworklet-synth">this</a>!
     </div>
+    <br/>
     <div>
-      Made with Rust and WebAssembly!
+      Made with <b>Rust</b>, <b>AudioWorklet</b> and <b>WebAssembly</b>!
     </div>
+    <br/>
+    <div>
+      Code: <a href ="https://github.com/the-drunk-coder/wasm-loop-player">https://github.com/the-drunk-coder/wasm-loop-player</a>
+    </div>
+    <br/>
     <script src="js/setup.js?t=10"></script>        
   </body>
 </html>

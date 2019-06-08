@@ -30,7 +30,7 @@ impl LoopPlayer {
         out_buf
     }
 
-    pub fn set_loop(&mut self, samples:&Vec<f32>) {
+    pub fn set_loop(&mut self, samples:&[f32]) {
         self.loop_buffer.resize(samples.len(), 0.0);
         self.index = 0;
         for i in 0..samples.len() {
