@@ -3,8 +3,8 @@ class LoopPlayerProcessor extends AudioWorkletProcessor {
 	return []
     }
 
-    constructor() {
-	super()
+    constructor(options) {
+	super(options)
 	this.port.onmessage = e => {
 	    // unfortunately, this seems to be the only way to load
 	    // the wasm module in the worklet.
@@ -72,13 +72,10 @@ class LoopPlayerProcessor extends AudioWorkletProcessor {
 	    return true
 	}
 	
-	//let output = outputs[0];
+	let output = outputs[0];
 	this._wasm.exports.process(this._outPtr_l, this._outPtr_r, this._size)
-	outputs[0][0].set(this._outBuf_l)
-	//outputs[0][1].set(this._outBuf_l)
-
-
-
+	output[0].set(this._outBuf_l)
+	output[1].set(this._outBuf_r)
 
 	return true
     }
