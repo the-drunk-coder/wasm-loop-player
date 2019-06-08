@@ -14,7 +14,7 @@ class LoopPlayerProcessor extends AudioWorkletProcessor {
 		WebAssembly.instantiate(e.data.data).then(w => {		    
 		    this._wasm = w.instance
 		    // grow memory to accomodate full sample ... 
-		    this._wasm.exports.memory.grow(150)
+		    this._wasm.exports.memory.grow(250)
 		    this._size = 128
 		    // WHY IS THE ALLOCATION ORDER IMPORTANT HERE ??
 		    // BYTE OFFSET ??
@@ -31,10 +31,16 @@ class LoopPlayerProcessor extends AudioWorkletProcessor {
 			this._wasm.exports.set_sample_data_raw(this._samplePtr, this._sample_size)
 			this._sample_set = true;
 		    }
-		    this._outPtr = this._wasm.exports.alloc(this._size)		    
-		    this._outBuf = new Float32Array (
+		    this._outPtr_r = this._wasm.exports.alloc(this._size)		    
+		    this._outBuf_r = new Float32Array (
 			this._wasm.exports.memory.buffer,
-			this._outPtr,
+			this._outPtr_r,
+			this._size
+		    )
+		    this._outPtr_l = this._wasm.exports.alloc(this._size)		    
+		    this._outBuf_l = new Float32Array (
+			this._wasm.exports.memory.buffer,
+			this._outPtr_l,
 			this._size
 		    )
 		})		
@@ -66,11 +72,13 @@ class LoopPlayerProcessor extends AudioWorkletProcessor {
 	    return true
 	}
 	
-	let output = outputs[0];
-	for (let channel = 0; channel < output.length; ++channel) {	    
-	    this._wasm.exports.process(this._outPtr, this._size)
-	    output[channel].set(this._outBuf)	    
-	}
+	//let output = outputs[0];
+	this._wasm.exports.process(this._outPtr_l, this._outPtr_r, this._size)
+	outputs[0][0].set(this._outBuf_l)
+	//outputs[0][1].set(this._outBuf_l)
+
+
+
 
 	return true
     }

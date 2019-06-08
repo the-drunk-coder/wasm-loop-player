@@ -3,24 +3,26 @@ extern crate lazy_static;
 
 use std::sync::Mutex;
 
-mod loop_player;
+#[cfg(feature = "wee_alloc")]
+#[global_allocator]
+static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 #[no_mangle]
 pub extern "C" fn alloc(size: usize) -> *mut f32 {
-    let mut buf = Vec::<f32>::with_capacity(size);
-    let ptr = buf.as_mut_ptr();
-    std::mem::forget(buf);
-    ptr as *mut f32
+    let vec: Vec<f32> = vec![0.0; size];
+    Box::into_raw(vec.into_boxed_slice()) as *mut f32
 }
 
+mod binaural_loop_player;
+
 lazy_static! {
-    static ref LOOPER: Mutex<loop_player::LoopPlayer> = Mutex::new(loop_player::LoopPlayer::new());
+    static ref LOOPER: Mutex<binaural_loop_player::BinauralLoopPlayer> = Mutex::new(binaural_loop_player::BinauralLoopPlayer::new());
 }
 
 #[no_mangle]
-pub extern "C" fn process(out_ptr: *mut f32, size: usize) {
+pub extern "C" fn process(out_ptr_l: *mut f32, out_ptr_r: *mut f32, size: usize) {
     let mut looper = LOOPER.lock().unwrap();
-    looper.process(out_ptr, size);
+    looper.process(out_ptr_l, out_ptr_r, size);
 }
 
 #[no_mangle]
