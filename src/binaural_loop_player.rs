@@ -26,9 +26,11 @@ impl BinauralLoopPlayer {
         let buf_ambi = self.encoder.encode_block(&buf, 0.0, 0.0);
         let buf_bin = self.binauralizer.binauralize(&buf_ambi);
         
-        let out_buf: &mut [f32] = unsafe { std::slice::from_raw_parts_mut(out_ptr_l, size)};
+        let out_buf_l: &mut [f32] = unsafe { std::slice::from_raw_parts_mut(out_ptr_l, size)};
+        let out_buf_r: &mut [f32] = unsafe { std::slice::from_raw_parts_mut(out_ptr_r, size)};
         for i in 0..size {
-            out_buf[i] = buf_bin[0][i] as f32;
+            out_buf_l[i] = buf_bin[0][i] as f32;
+            out_buf_r[i] = buf_bin[1][i] as f32;
         }
     }
 
