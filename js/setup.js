@@ -14,7 +14,6 @@ if (ctx.audioWorklet === undefined) {
 
 	    const autoPlay = document.getElementById('auto-play')
 	    autoPlay.addEventListener('change', e => {
-		console.log(e.target.value);
 		if (e.target.value === 0) {
 		    n.port.postMessage({ type: 'disable', })
 		} else {
