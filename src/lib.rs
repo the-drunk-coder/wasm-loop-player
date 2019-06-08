@@ -49,4 +49,18 @@ pub extern "C" fn set_elevation(ele: f32) {
     looper.set_elevation(ele);
 }
 
+#[no_mangle]
+pub extern "C" fn enable(ele: f32) {
+    let mut looper = LOOPER.lock().unwrap();
+    looper.enable();
+}
+
+#[no_mangle]
+pub extern "C" fn disable(ele: f32) {
+    let mut looper = LOOPER.lock().unwrap();
+    looper.disable();
+}
+
+
+
 

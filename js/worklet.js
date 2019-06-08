@@ -102,6 +102,10 @@ class LoopPlayerProcessor extends AudioWorkletProcessor {
 		    this._wasm.exports.set_ir_data_raw(this._irPtr, this._ir_size)
 		    this._ir_set = true;
 		}
+	    } else if (e.data.type === 'enable') {
+		this._wasm.exports.enable();
+	    } else if (e.data.type === 'disable') {
+		this._wasm.exports.disable();
 	    }
 	}
     }
