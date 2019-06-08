@@ -33,11 +33,10 @@ impl std::clone::Clone for BlockConvolver {
 impl BlockConvolver {
 
     // create block convolver from ir
-    pub fn from_ir(ir: &Vec<f32>) -> BlockConvolver {
+    pub fn from_ir(ir: &[f32; 128]) -> BlockConvolver {
 
         let mut fft = RFft1D::<f32>::new(ir.len());
-        let ir_freq_domain = fft.forward(ir.as_slice());
-
+        let ir_freq_domain = fft.forward(ir);
         let in_freq_domain = vec![Complex::new(0.0,0.0); ir.len()];
         
         BlockConvolver {
@@ -48,7 +47,7 @@ impl BlockConvolver {
             len: ir.len(),            
         }
     }
-
+    
     pub fn convolve(&mut self, input: &[f32; 128]) -> [f32; 128] {
 
         self.in_freq_domain = self.fft.forward(input);

@@ -31,4 +31,22 @@ pub extern "C" fn set_sample_data_raw(sample_ptr: *mut f32, sample_size: usize) 
     looper.set_sample_data_raw(sample_ptr, sample_size);
 }
 
+#[no_mangle]
+pub extern "C" fn set_ir_data_raw(sample_ptr: *mut f32, sample_size: usize) {
+    let mut looper = LOOPER.lock().unwrap();
+    looper.set_ir_data(sample_ptr, sample_size);
+}
+
+#[no_mangle]
+pub extern "C" fn set_azimuth(azi: f32) {
+    let mut looper = LOOPER.lock().unwrap();
+    looper.set_azimuth(azi);
+}
+
+#[no_mangle]
+pub extern "C" fn set_elevation(ele: f32) {
+    let mut looper = LOOPER.lock().unwrap();
+    looper.set_elevation(ele);
+}
+
 
