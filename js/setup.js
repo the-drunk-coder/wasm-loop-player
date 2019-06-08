@@ -14,10 +14,11 @@ if (ctx.audioWorklet === undefined) {
 
 	    const autoPlay = document.getElementById('auto-play')
 	    autoPlay.addEventListener('change', e => {
-		if (e.target.value === 1) {
-		    ctx.resume()
+		console.log(e.target.value);
+		if (e.target.value === 0) {
+		    n.port.postMessage({ type: 'disable', })
 		} else {
-		    ctx.suspend()
+		    n.port.postMessage({ type: 'enable', })
 		}
 	    })
 	    
@@ -47,7 +48,5 @@ if (ctx.audioWorklet === undefined) {
 
 	})
    
-    console.log("sr: " + ctx.sampleRate);
-
-    
+    console.log("sr: " + ctx.sampleRate);    
 }
