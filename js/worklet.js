@@ -41,7 +41,7 @@ class LoopPlayerProcessor extends AudioWorkletProcessor {
 			this._sample_set = true;
 		    }
 		    if(this._ir_data) {
-			this._irPtr = this._wasm.exports.alloc(this._sample_size)	
+			this._irPtr = this._wasm.exports.alloc(this._ir_size)	
 			this._irBuf = new Float32Array (
 			    this._wasm.exports.memory.buffer,
 			    this._irPtr,
@@ -107,7 +107,7 @@ class LoopPlayerProcessor extends AudioWorkletProcessor {
     }
     
     process(inputs, outputs, parameters) {
-	if (!this._wasm || !this._sample_set ) {
+	if (!this._wasm || !this._sample_set) {
 	    return true
 	}
 
