@@ -17,6 +17,9 @@ if (ctx.audioWorklet === undefined) {
 		if (e.target.value === 0) {
 		    n.port.postMessage({ type: 'disable', })
 		} else {
+		    if(ctx.state === "suspended") {
+			ctx.resume();
+		    }
 		    n.port.postMessage({ type: 'enable', })
 		}
 	    })
