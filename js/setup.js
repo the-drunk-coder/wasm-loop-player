@@ -20,6 +20,7 @@ if (ctx.audioWorklet === undefined) {
 		    if(ctx.state === "suspended") {
 			ctx.resume();
 		    }
+
 		    n.port.postMessage({ type: 'enable', })
 		}
 	    })
@@ -34,20 +35,19 @@ if (ctx.audioWorklet === undefined) {
 		n.parameters.get('elevation').value = e.target.value
 	    })
 	    
-	    fetch('wasm/wasm_loop_player.wasm?t=' + new Date().getTime())
-		.then(r => r.arrayBuffer())
-		.then(r => n.port.postMessage({ type: 'loadWasm', data: r }))
-	    
-	    fetch('audio/amen.wav?t=' + new Date().getTime())
+	    fetch('audio/amen.flac?t=' + new Date().getTime())
 		.then(r => r.arrayBuffer())
 		.then(r => ctx.decodeAudioData(r)
 		      .then(r => n.port.postMessage({ type: 'loadSample', samples: r.getChannelData(0), length: r.length })))
-
-	    fetch('audio/ir.wav?t=' + new Date().getTime())
+	    
+	    fetch('audio/ir.flac?t=' + new Date().getTime())
 		.then(r => r.arrayBuffer())
 		.then(r => ctx.decodeAudioData(r)
 		      .then(r => n.port.postMessage({ type: 'loadIr', samples: r.getChannelData(0), length: r.length })))
-
+	    
+	    fetch('wasm/wasm_loop_player.wasm?t=' + new Date().getTime())
+		.then(r => r.arrayBuffer())
+		.then(r => n.port.postMessage({ type: 'loadWasm', data: r }))	    
 	})
    
     console.log("sr: " + ctx.sampleRate);    

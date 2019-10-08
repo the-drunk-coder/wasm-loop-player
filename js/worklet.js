@@ -19,7 +19,7 @@ class LoopPlayerProcessor extends AudioWorkletProcessor {
 	    // the wasm module in the worklet.
 	    // we have to fetch it here because the worklet scope doesn't expose
 	    // 'fetch()'
-	    if (e.data.type === 'loadWasm') {
+	    if (e.data.type === 'loadWasm') {		
 		WebAssembly.instantiate(e.data.data).then(w => {		    
 		    this._wasm = w.instance
 		    // grow memory to accomodate full sample ... 
@@ -66,7 +66,7 @@ class LoopPlayerProcessor extends AudioWorkletProcessor {
 			this._size
 		    )
 		})		
-	    } else if (e.data.type === 'loadSample') {
+	    } else if (e.data.type === 'loadSample') {		
 		// same with the sample ... 
 		this._sample_size = e.data.length
 		this._sample_data = e.data.samples
