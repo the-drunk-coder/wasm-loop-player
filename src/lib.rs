@@ -50,13 +50,13 @@ pub extern "C" fn set_elevation(ele: f32) {
 }
 
 #[no_mangle]
-pub extern "C" fn enable(ele: f32) {
+pub extern "C" fn enable() {
     let mut looper = LOOPER.lock().unwrap();
     looper.enable();
 }
 
 #[no_mangle]
-pub extern "C" fn disable(ele: f32) {
+pub extern "C" fn disable() {
     let mut looper = LOOPER.lock().unwrap();
     looper.disable();
 }

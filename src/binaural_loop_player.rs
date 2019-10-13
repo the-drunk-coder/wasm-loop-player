@@ -37,7 +37,7 @@ impl BinauralLoopPlayer {
     
     pub fn process(&mut self, out_ptr_l: *mut f32, out_ptr_r: *mut f32, size: usize) {
 
-        if(self.enabled){                                    
+        if self.enabled {                                    
             let buf = self.player.get_next_block();
             let buf_ambi = self.encoder.encode_block(&buf, self.azimuth, self.elevation);
             let buf_bin = self.binauralizer.binauralize(&buf_ambi);
