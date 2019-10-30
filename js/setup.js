@@ -5,23 +5,23 @@ const ctx = new AudioContext({
 if (ctx.audioWorklet === undefined) {
     alert("AudioWorklet isn't supported... It cannot work.")
 } else {  
-    ctx.audioWorklet.addModule('js/worklet.js?t=' + new Date().getTime())
+    ctx.audioWorklet.addModule('js/worklet_js.js?t=' + new Date().getTime())
 	.then(() => {
-	    const n = new AudioWorkletNode(ctx, 'loop-player-processor', { numberOfInputs: 1,
-									   numberOfOutputs: 1,
-									   outputChannelCount: [2], } );
+	    console.log("load");
+	    const n = new AudioWorkletNode(ctx, 'loop-player-processor-js', { numberOfInputs: 1,
+									      numberOfOutputs: 1,
+									      outputChannelCount: [2], } );
+	    console.log("connect");    
 	    n.connect(ctx.destination)
 
 	    const autoPlay = document.getElementById('auto-play')
 	    autoPlay.addEventListener('change', e => {
 		if (e.target.value === 0) {
-		    n.port.postMessage({ type: 'disable', })
+		    ctx.suspend();
 		} else {
 		    if(ctx.state === "suspended") {
 			ctx.resume();
 		    }
-
-		    n.port.postMessage({ type: 'enable', })
 		}
 	    })
 	    
@@ -44,10 +44,6 @@ if (ctx.audioWorklet === undefined) {
 		.then(r => r.arrayBuffer())
 		.then(r => ctx.decodeAudioData(r)
 		      .then(r => n.port.postMessage({ type: 'loadIr', samples: r.getChannelData(0), length: r.length })))
-	    
-	    fetch('wasm/wasm_loop_player.wasm?t=' + new Date().getTime())
-		.then(r => r.arrayBuffer())
-		.then(r => n.port.postMessage({ type: 'loadWasm', data: r }))	    
 	})
    
     console.log("sr: " + ctx.sampleRate);    
